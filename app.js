@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -20,7 +21,7 @@ app.use(express.json());
 
 app.use(methodOverride('_method'));
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/homehop";
+const MONGO_URL = process.env.MONGO_URL;
 
 main()
     .then(() => console.log('MongoDB Connected!'))
@@ -30,7 +31,7 @@ async function main() {
     await mongoose.connect(MONGO_URL);
 }
 
-let port = 8080;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
@@ -74,6 +75,11 @@ app.get('/listings/:id/edit', catchAsync(async (req, res) => {
 }));
 
 app.post('/listings', validateListing, catchAsync(async (req, res) => {
+    // Temporary Fix for Public “Add Listing” Abuse Risk
+    if (process.env.NODE_ENV === "production") {
+        throw new AppError("Demo mode: Listing creation disabled", 403);
+    }
+    //
     let listing = req.body.listing;
 
     if (listing.amenities) {

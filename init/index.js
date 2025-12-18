@@ -1,8 +1,9 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const Listing = require('../models/listing.js');
 const { data } = require('./data.js');
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/homehop";
+const MONGO_URL = process.env.MONGO_URL;
 
 main()
     .then(() => console.log('MongoDB Connected!'))
