@@ -51,10 +51,10 @@ footer {
 }
 
 .cards-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 19rem));
+    gap: 1rem;
+    justify-content: center;
 }
 
 .card {
