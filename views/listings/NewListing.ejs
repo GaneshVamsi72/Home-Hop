@@ -4,23 +4,26 @@
     <div class="col-md-8 offset-md-2">
         <h3 class="mb-4">Create New Listing</h3>
 
-        <form action="/listings" method="POST">
+        <form action="/listings" method="POST" class="needs-validation" novalidate>
             <div class="mb-3">
                 <label class="form-label">Title</label>
                 <input class="form-control" name="listing[title]" type="text" required>
+                <div class="invalid-feedback">Title is required!</div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea class="form-control" name="listing[description]" required></textarea>
+                <textarea class="form-control" name="listing[description]" rows="4" required></textarea>
+                <div class="invalid-feedback">Description is required!</div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Image URL</label>
-                <input class="form-control" name="listing[image]" type="text">
+                <input class="form-control" name="listing[image]" type="url" placeholder="https://...">
             </div>
             <div class="row gx-2">
                 <div class="col-7 mb-3">
                     <label class="form-label">Price</label>
                     <input class="form-control" name="listing[price]" min="0" type="number" required>
+                    <div class="invalid-feedback">Valid Pricing is required!</div>
                 </div>
                 <div class="col-5 mb-3">
                     <label class="form-label">Currency</label>
@@ -34,10 +37,12 @@
                 <div class="col-8 mb-3">
                     <label class="form-label">Location (City + State)</label>
                     <input class="form-control" name="listing[location]" placeholder="City, State" type="text" required>
+                    <div class="invalid-feedback">Location is required!</div>
                 </div>
                 <div class="col-4 mb-3">
                     <label class="form-label">Country</label>
                     <input class="form-control" name="listing[country]" type="text" required>
+                    <div class="invalid-feedback">Country is required!</div>
                 </div>
             </div> 
             <div class="mb-3">

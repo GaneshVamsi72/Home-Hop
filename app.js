@@ -5,6 +5,9 @@ const Listing = require('./models/listing.js');
 const path = require('path');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
+const catchAsync = require('./utils/catchAsync.js');
+const AppError = require('./utils/AppError.js');
+const validateListing = require('./validateListing.js');
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -43,49 +46,74 @@ app.get('/', (req, res) => {
     res.render('HomePage.ejs');
 });
 
-app.get('/listings', async (req, res) => {
+app.get('/listings', catchAsync(async (req, res) => {
     let listings = await Listing.find({});
     res.render('./listings/AllListings.ejs', { listings });
-});
+}));
 
 app.get('/listings/new', (req, res) => {
     res.render('./listings/NewListing.ejs');
 });
 
-app.get('/listings/:id', async (req, res) => {
+app.get('/listings/:id', catchAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
+    if (!listing) {
+        throw new AppError("Listing Not Found", 404);
+    }
     res.render('./listings/ListingDetailed.ejs', { listing });
-});
+}));
 
-app.get('/listings/:id/edit', async (req, res) => {
+app.get('/listings/:id/edit', catchAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
+    if (!listing) {
+        throw new AppError("Listing Not Found", 404);
+    }
     res.render('./listings/EditListing.ejs', { listing });
-});
+}));
 
-app.post('/listings', async (req, res) => {
+app.post('/listings', validateListing, catchAsync(async (req, res) => {
     let listing = req.body.listing;
+
     if (listing.amenities) {
         listing.amenities = listing.amenities.split(",").map(a => a.trim());
     }
-    await Listing.insertOne(listing);
+    await Listing.create(listing);
     res.redirect('/listings');
-});
+}));
 
-app.put('/listings/:id', async (req, res) => {
+app.put('/listings/:id', validateListing, catchAsync(async (req, res) => {
     let id = req.params.id;
     let listing = req.body.listing;
+    
     if (listing.amenities) {
         listing.amenities = listing.amenities.split(",").map(a => a.trim());
     }
-    await Listing.findByIdAndUpdate(id,  listing, { runValidators: true });
+    
+    let updated = await Listing.findByIdAndUpdate(id,  listing, { runValidators: true });
+    if (!updated) {
+        throw new AppError("Listing Not Found", 404);
+    }
 
     res.redirect(`/listings/${id}`);
+}));
+
+app.delete('/listings/:id', catchAsync(async (req, res) => {
+    let id = req.params.id;
+    let deleted = await Listing.findByIdAndDelete(id);
+    if (!deleted) {
+        throw new AppError("Listing Not Found", 404);
+    }
+    res.redirect('/listings');
+}));
+
+app.use((req, res, next) => {
+    next(new AppError(`Can't find ${req.url} on this server`, 404));
 });
 
-app.delete('/listings/:id', async (req, res) => {
-    let id = req.params.id;
-    await Listing.findByIdAndDelete(id);
-    res.redirect('/listings');
+app.use((err, req, res, next) => {
+    let { statusCode = 500, message = "Something Went Wrong!"} = err;
+    
+    res.status(statusCode).render('ErrorPage.ejs', { message });
 });

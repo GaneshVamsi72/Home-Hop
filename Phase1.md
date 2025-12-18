@@ -18,3 +18,13 @@ Styling (Bootstrap)
 
 Important Package:- EJS Mate (Modular Styling) !
 
+
+
+**Part C:**
+
+Form Validations
+
+Error Handling
+
+Schema Validation With 'Joi' (Node Package)
+
