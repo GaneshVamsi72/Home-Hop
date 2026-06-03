@@ -6,18 +6,15 @@
     }
 </style>
 
-<h3 style="text-align: center;">Listing Details</h3>
+<h3 style="text-align: center;"><%= listing.title %></h3>
 
 <div class="container">
     <div class="row">
         <div class="col-md-8 offset-md-2 mb-3">
-            <div class="card">
+            <div class="card mb-3">
                 <div class="d-flex justify-content-center">
                     <img class="card-img-top" style="width: 20rem" src=<%= listing.image %> alt=<%= listing.title %>>
                 </div>
-                <div class="card-body">
-                    <h3 class="card-title" style="text-align: center;"><%= listing.title %></h3>
-                </div>  
             </div>
             
             <p class="mb-1"> <b><%= listing.type %></b> In <%= listing.location %>, <%= listing.country %></p>
@@ -35,6 +32,100 @@
                     <% }) %>
                 <% } %>
             </ul>
+
+            <hr>
+
+            <div>
+                <h4>Leave a Review</h4>
+
+                <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+                    <div class="mb-3 d-flex gap-3 align-items-center">
+                        <label for="rating" class="form-label mb-0">Rating</label>
+                        <select class="form-select w-50" name="review[rating]" required>
+                            <option value="" selected disabled>Select Rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <div class="invalid-feedback">Rating is required!</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Comment</label>
+                        <textarea name="review[comment]" class="form-control" rows="4" required></textarea>
+                        <div class="invalid-feedback">Feedback is required!</div>
+                    </div>
+
+                    <button class="btn btn-dark">Add Review</button>
+                </form>
+            </div>
+
+            <hr>
+
+            <% 
+                let avgRating = 0;
+
+                if (listing.reviews.length) {
+                    avgRating = listing.reviews.reduce((sum, review) => sum + review.rating, 0) / listing.reviews.length;
+                }
+            %>
+
+            <div class="text-center">
+                <% if (listing.reviews.length) { %>
+                        <h3>Average Rating</h3>
+                        <p class="badge bg-dark text-white">
+                            <%= avgRating.toFixed(1) %> ⭐
+                        </p>
+
+                        <small>
+                            (<%= listing.reviews.length %> reviews)
+                        </small>
+                <% } %>
+            </div>
+
+            <hr>
+
+            <h4>All Reviews</h4>
+
+            <% if (listing.reviews.length) { %>
+                <div class="row">
+                    <% listing.reviews.forEach((review) => { %>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex gap-1">
+                                        <h6>
+                                            <%= "⭐".repeat(review.rating) %> 
+                                        </h6>
+                                        
+                                        <p class="text-muted small mb-2">
+                                            <%= review.createdAt.toLocaleDateString('en-IN') %>
+                                        </p>
+
+                                        <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="ms-auto">
+                                            <button class="review-trash">
+                                                <i class="fa-solid fa-trash" style="color: #fe424d;"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <p class="card-text">
+                                        <%= review.comment %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="text-muted">
+                    No reviews yet. Be the first to provide review !
+                </p>
+            <% } %>
+
+            <hr>
 
             <div class="d-flex gap-2">
                 <a href="/listings/<%= listing._id %>/edit" class="btn btn-primary" method="GET">Edit</a>

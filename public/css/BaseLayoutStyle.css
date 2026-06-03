@@ -89,3 +89,8 @@ footer {
     color: white;
     background-color: #fe424d;
 }
+
+.review-trash {
+    border: none;
+    background-color: white;
+}
