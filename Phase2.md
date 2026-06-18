@@ -22,3 +22,11 @@ Handling: Delete Listing
 
 Express Router - Restructuring Listings \& Reviews
 
+
+
+**Part C:**
+
+Session Implementation (express-session)
+
+Flash Implementation (connect-flash)
+
