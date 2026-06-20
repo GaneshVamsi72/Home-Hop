@@ -10,6 +10,19 @@
         <a class="nav-link" href="/listings">All Listings</a>
         <a class="nav-link" href="/listings/new">Become a Host</a>
       </div>
+      <div class="navbar-nav ms-auto mt-2">
+        <% if (!curUser) { %>
+          <div class="d-flex gap-2">
+            <a href="/login" class="btn" id="log-btn">Login</a>
+
+            <a href="/signup" class="btn" id="sign-btn">Sign Up</a>
+          </div>
+        <% } else { %>
+          <div>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+          </div>
+        <% } %>
+      </div>
     </div>
   </div>
 </nav>

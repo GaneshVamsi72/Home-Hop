@@ -6,8 +6,9 @@ const catchAsync = require('../utils/catchAsync.js');
 const Listing = require('../models/listing.js');
 const AppError = require('../utils/AppError.js');
 const Review = require('../models/review.js');
+const isLoggedIn = require('../middleware/auth.js');
 
-router.post('/', validateReview, catchAsync(async (req, res) => {
+router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
     let id = req.params.id;
     let listing = await Listing.findById(id);
     if (!listing) {
@@ -25,7 +26,7 @@ router.post('/', validateReview, catchAsync(async (req, res) => {
     res.redirect(`/listings/${id}`);
 }));
 
-router.delete('/:reviewId', catchAsync(async (req, res) => {
+router.delete('/:reviewId', isLoggedIn, catchAsync(async (req, res) => {
     let id = req.params.id;
     let reviewId = req.params.reviewId;
 

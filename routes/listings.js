@@ -4,13 +4,14 @@ const catchAsync = require('../utils/catchAsync.js');
 const Listing = require('../models/listing.js');
 const AppError = require('../utils/AppError.js');
 const validateListing = require('../validation_middleware/validateListing.js');
+const isLoggedIn = require('../middleware/auth.js');
 
 router.get('/', catchAsync(async (req, res) => {
     let listings = await Listing.find({});
     res.render('./listings/AllListings.ejs', { listings });
 }));
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('./listings/NewListing.ejs');
 });
 
@@ -24,7 +25,7 @@ router.get('/:id', catchAsync(async (req, res) => {
     res.render('./listings/ListingDetailed.ejs', { listing });
 }));
 
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
     if (!listing) {
@@ -34,7 +35,7 @@ router.get('/:id/edit', catchAsync(async (req, res) => {
     res.render('./listings/EditListing.ejs', { listing });
 }));
 
-router.post('/', validateListing, catchAsync(async (req, res) => {
+router.post('/', isLoggedIn, validateListing, catchAsync(async (req, res) => {
     // Temporary Fix for Public “Add Listing” Abuse Risk
     if (process.env.NODE_ENV === "production") {
         req.flash("error", "Demo mode: Listing creation disabled");
@@ -53,7 +54,7 @@ router.post('/', validateListing, catchAsync(async (req, res) => {
     res.redirect('/listings');
 }));
 
-router.put('/:id', validateListing, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, validateListing, catchAsync(async (req, res) => {
     let id = req.params.id;
     let listing = req.body.listing;
     
@@ -72,7 +73,7 @@ router.put('/:id', validateListing, catchAsync(async (req, res) => {
     res.redirect(`/listings/${id}`);
 }));
 
-router.delete('/:id', catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
     let id = req.params.id;
     let deleted = await Listing.findByIdAndDelete(id);
     if (!deleted) {

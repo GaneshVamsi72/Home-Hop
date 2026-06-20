@@ -30,3 +30,26 @@ Session Implementation (express-session)
 
 Flash Implementation (connect-flash)
 
+
+
+**Part D: Authentication \& Authorization**
+passport (authentication middleware for Node.js), passport-local, passport-local-mongoose
+
+User Model (with plugin:- passport-local-mongoose)
+
+Configuring Strategy
+
+SignUp \& LogIn Implementation
+
+LogOut Implementation
+
+Automatic Login After SignUp
+
+Saving Redirect URL
+
+
+
+isLoggedIn Implementation
+
+
+

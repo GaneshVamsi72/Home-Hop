@@ -80,17 +80,34 @@ footer {
     font-size: 0.9rem;
 }
 
-#cl-btn {
+#cl-btn, #ul-btn {
     color: white;
     background-color: #fe424d;
 }
 
-#ul-btn {
+#log-btn {
+    color: #fe424d;
+    border-color: #fe424d;
+}
+
+#log-btn:hover {
     color: white;
     background-color: #fe424d;
+}
+
+#sign-btn {
+    color: white;
+    background-color: #fe424d;
+    border-color: #fe424d;
 }
 
 .review-trash {
     border: none;
     background-color: white;
+}
+
+.auth-card{
+    width: 100%;
+    max-width: 450px;
+    border-radius: 15px;
 }

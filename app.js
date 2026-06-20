@@ -10,6 +10,10 @@ const listingRouter = require('./routes/listings.js');
 const reviewRouter = require('./routes/reviews.js');
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user.js');
+const userRouter = require('./routes/users.js');
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -27,17 +31,77 @@ const sessionOptions = {
     resave: false,
     saveUninitialized: true,
     cookie: {
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 60 * 60 * 1000,
         httpOnly: true
     }
 }
 
+// A session refers to a time-limited interaction between two or more communication devices or systems.
+// It is a stateful connection that allows for the exchange of information and commands between the parties involved.
 app.use(session(sessionOptions));
+
+app.use(passport.initialize()); // Intializes Passport for incoming requests, allowing authentication strategies to be applied.
+app.use(passport.session()); // Middleware that will restore login state from a session.
+// If sessions are being utilized, and a login session has been established, this middleware will populate req.user with the current user.
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+/*
+What are Serialize and Deserialize?
+
+Login
+
+Suppose:
+
+{
+    _id: "123",
+    username: "vamsi"
+}
+
+Passport stores ONLY: "123" inside session.
+
+This is serializeUser() !
+
+Next Request
+
+Passport sees: "123" and fetches:
+
+{
+    _id: "123",
+    username: "vamsi"
+}
+
+from MongoDB.
+
+This is deserializeUser() !
+*/ 
+
+/*
+What Passport Adds?
+
+After successful login you'll automatically get:
+
+req.user
+
+Example:
+
+console.log(req.user);
+{
+    _id: "...",
+    username: "vamsi",
+    email: "..."
+}
+*/
+
 app.use(flash());
 
 app.use((req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
+
+    res.locals.curUser = req.user;
 
     next();
 });
@@ -64,6 +128,7 @@ app.get('/', (req, res) => {
     res.render('HomePage.ejs');
 });
 
+app.use('/', userRouter);
 app.use('/listings', listingRouter);
 app.use('/listings/:id/reviews', reviewRouter);
 
