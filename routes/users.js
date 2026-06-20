@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const passport = require('passport');
+const saveRedirectUrl = require('../middleware/saveRedirectUrl');
 
 router.get('/signup', (req, res) => {
     res.render('./users/signup.ejs');
@@ -36,6 +37,8 @@ router.post('/signup', async (req, res) => {
 
 router.post(
     '/login', 
+
+    saveRedirectUrl,
     
     // passport.authenticate() middleware invokes req.login() automatically.
     passport.authenticate('local', { 
@@ -46,7 +49,9 @@ router.post(
     (req, res) => {
         req.flash('success', `Welcome Back, ${req.user.username}!`);
 
-        res.redirect('/listings');
+        let redirectUrl = res.locals.redirectUrl || '/listings';
+
+        res.redirect(redirectUrl);
     }   
 );
 
