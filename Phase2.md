@@ -57,3 +57,5 @@ owner property in listing
 
 Authorization for Listing
 
+Authorization for Reviews
+

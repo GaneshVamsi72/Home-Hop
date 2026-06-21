@@ -95,21 +95,27 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex gap-1">
-                                        <h6>
-                                            <%= "⭐".repeat(review.rating) %> 
-                                        </h6>
+                                    <div class="d-flex gap-2">
+                                        <small class="fw-bold">
+                                            @<%= review.author.username %>
+                                        </small>
                                         
                                         <p class="text-muted small mb-2">
                                             <%= review.createdAt.toLocaleDateString('en-IN') %>
                                         </p>
 
-                                        <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="ms-auto">
-                                            <button class="review-trash">
-                                                <i class="fa-solid fa-trash" style="color: #fe424d;"></i>
-                                            </button>
-                                        </form>
+                                        <% if (curUser && review.author._id.equals(curUser._id)) { %>
+                                            <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="ms-auto">
+                                                <button class="review-trash">
+                                                    <i class="fa-solid fa-trash" style="color: #fe424d;"></i>
+                                                </button>
+                                            </form>
+                                        <% } %>
                                     </div>
+
+                                    <h6>
+                                        <%= "⭐".repeat(review.rating) %> 
+                                    </h6>
 
                                     <p class="card-text">
                                         <%= review.comment %>

@@ -7,6 +7,7 @@ const Listing = require('../models/listing.js');
 const AppError = require('../utils/AppError.js');
 const Review = require('../models/review.js');
 const isLoggedIn = require('../middleware/auth.js');
+const isReviewAuthor = require('../middleware/isReviewAuthor.js');
 
 router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
     let id = req.params.id;
@@ -16,6 +17,7 @@ router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
     }
 
     let review = new Review(req.body.review);
+    review.author = req.user._id;
     await review.save();
 
     listing.reviews.push(review._id);
@@ -26,7 +28,7 @@ router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
     res.redirect(`/listings/${id}`);
 }));
 
-router.delete('/:reviewId', isLoggedIn, catchAsync(async (req, res) => {
+router.delete('/:reviewId', isLoggedIn, isReviewAuthor, catchAsync(async (req, res) => {
     let id = req.params.id;
     let reviewId = req.params.reviewId;
 
