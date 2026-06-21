@@ -5,6 +5,7 @@ const Listing = require('../models/listing.js');
 const AppError = require('../utils/AppError.js');
 const validateListing = require('../validation_middleware/validateListing.js');
 const isLoggedIn = require('../middleware/auth.js');
+const isOwner = require('../middleware/isOwner.js');
 
 router.get('/', catchAsync(async (req, res) => {
     let listings = await Listing.find({});
@@ -17,7 +18,7 @@ router.get('/new', isLoggedIn, (req, res) => {
 
 router.get('/:id', catchAsync(async (req, res) => {
     let { id } = req.params;
-    let listing = await Listing.findById(id).populate("reviews");
+    let listing = await Listing.findById(id).populate("reviews").populate("owner");
     if (!listing) {
         req.flash("error", "Listing Not Found!");
         return res.redirect('/listings');
@@ -25,7 +26,7 @@ router.get('/:id', catchAsync(async (req, res) => {
     res.render('./listings/ListingDetailed.ejs', { listing });
 }));
 
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, isOwner, catchAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
     if (!listing) {
@@ -47,6 +48,7 @@ router.post('/', isLoggedIn, validateListing, catchAsync(async (req, res) => {
     if (listing.amenities) {
         listing.amenities = listing.amenities.split(",").map(a => a.trim());
     }
+    listing.owner = req.user._id;
     await Listing.create(listing);
 
     req.flash("success", "Listing Created Successfully!");
@@ -54,7 +56,7 @@ router.post('/', isLoggedIn, validateListing, catchAsync(async (req, res) => {
     res.redirect('/listings');
 }));
 
-router.put('/:id', isLoggedIn, validateListing, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, isOwner, validateListing, catchAsync(async (req, res) => {
     let id = req.params.id;
     let listing = req.body.listing;
     
@@ -73,7 +75,7 @@ router.put('/:id', isLoggedIn, validateListing, catchAsync(async (req, res) => {
     res.redirect(`/listings/${id}`);
 }));
 
-router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, isOwner, catchAsync(async (req, res) => {
     let id = req.params.id;
     let deleted = await Listing.findByIdAndDelete(id);
     if (!deleted) {

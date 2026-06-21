@@ -32,7 +32,7 @@ Flash Implementation (connect-flash)
 
 
 
-**Part D: Authentication \& Authorization**
+**Part D: Authentication**
 passport (authentication middleware for Node.js), passport-local, passport-local-mongoose
 
 User Model (with plugin:- passport-local-mongoose)
@@ -40,6 +40,8 @@ User Model (with plugin:- passport-local-mongoose)
 Configuring Strategy
 
 SignUp \& LogIn Implementation
+
+isLoggedIn Implementation
 
 LogOut Implementation
 
@@ -49,7 +51,9 @@ Saving Redirect URL
 
 
 
-isLoggedIn Implementation
+**Part E: Authorization**
 
+owner property in listing
 
+Authorization for Listing
 

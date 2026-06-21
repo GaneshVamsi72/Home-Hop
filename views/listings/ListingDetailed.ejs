@@ -127,13 +127,15 @@
 
             <hr>
 
-            <div class="d-flex gap-2">
-                <a href="/listings/<%= listing._id %>/edit" class="btn btn-primary" method="GET">Edit</a>
+            <% if (curUser && listing.owner.equals(curUser._id)) { %>
+                <div class="d-flex gap-2">
+                    <a href="/listings/<%= listing._id %>/edit" class="btn btn-primary" method="GET">Edit</a>
 
-                <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
-                    <button class="btn btn-outline-danger" type="submit" id="deleteBtn">Remove Listing</button>
-                </form>
-            </div>
+                    <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-outline-danger" type="submit" id="deleteBtn">Remove Listing</button>
+                    </form>
+                </div>
+            <% } %>
         </div>
     </div>
 </div>
