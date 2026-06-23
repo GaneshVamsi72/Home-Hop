@@ -8,18 +8,17 @@ const isLoggedIn = require('../middleware/auth.js');
 const isOwner = require('../middleware/isOwner.js');
 const listingController = require('../controllers/listingController.js');
 
-router.get('/', catchAsync(listingController.index));
+router.route('/')
+    .get(catchAsync(listingController.index))
+    .post(isLoggedIn, validateListing, catchAsync(listingController.createListing));
 
 router.get('/new', isLoggedIn, listingController.renderNewForm);
 
-router.get('/:id', catchAsync(listingController.showListing));
+router.route('/:id')
+    .get(catchAsync(listingController.showListing))
+    .put(isLoggedIn, isOwner, validateListing, catchAsync(listingController.updateListing))
+    .delete(isLoggedIn, isOwner, catchAsync(listingController.deleteListing));
 
 router.get('/:id/edit', isLoggedIn, isOwner, catchAsync(listingController.renderEditForm));
-
-router.post('/', isLoggedIn, validateListing, catchAsync(listingController.createListing));
-
-router.put('/:id', isLoggedIn, isOwner, validateListing, catchAsync(listingController.updateListing));
-
-router.delete('/:id', isLoggedIn, isOwner, catchAsync(listingController.deleteListing));
 
 module.exports = router;
